@@ -33,9 +33,6 @@ public class NavProfile extends AppCompatActivity {
         imageView= findViewById(R.id.imageView2);
         Glide.with(this)
                 .load(sharedPreferences.getString("imageprefernce",null))
-                .centerCrop()
-                .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .into(imageView);
 
 

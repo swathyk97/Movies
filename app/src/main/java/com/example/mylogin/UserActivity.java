@@ -48,6 +48,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +71,7 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences.Editor editor;
     String spinnerValue;
     ImageView imageView;
+    Bitmap bitmap;
 
 
     Uri imageUri2;
@@ -109,12 +112,7 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
         TextView nav_user = hView.findViewById(R.id.name);
         imageView=hView.findViewById(R.id.imageView2);
         nav_user.setText(sharedPreferences.getString("name",null));
-        imageView.setImageURI(image.imageUri);
-
-
-
-        Log.i("Log", " imageuri " + imageUri2);
-
+        imageView.setImageBitmap(decodeBase64(sharedPreferences.getString("image","")));
 
 
 
@@ -127,7 +125,11 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
             content.setVisibility(View.GONE);
         }
     }
-
+    public static Bitmap decodeBase64(String input) {
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory
+                .decodeByteArray(decodedByte, 0, decodedByte.length);
+    }
 
     public void displayNotes() {
         arrayList = new ArrayList<>(myDb.getAllData());
