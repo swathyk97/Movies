@@ -1,33 +1,51 @@
 package com.example.mylogin;
 
+import android.R.layout;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
-class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>{
+import static com.example.mylogin.R.id.radioGroup;
+
+
+class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>implements AdapterView.OnItemSelectedListener{
     Context context;
     Activity activity;
     ArrayList<NoteModel> arrayList;
     DBHelper dbHelper;
-    EditText editId, editName, editAge, editPlace, editDesignation;
+    EditText editId;
     Button btnUpdate;
+    Spinner spinner;
+    RadioButton radioButton1, radioButton2,selectedRadioButton;
+    RadioGroup radioGroup;
+    String spinnerValue,type;
+    private View view;
+
 
     public NotesAdapter(Context context,Activity activity, ArrayList<NoteModel> arrayList) {
         this.context = context;
@@ -40,20 +58,19 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>{
         View view = LayoutInflater.from(context).inflate(R.layout.card_view, viewGroup, false);
         return new viewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(final NotesAdapter.viewHolder holder, final int position) {
-        holder.id.setText("ID:"+arrayList.get(position).get_id());
-        holder.name.setText("Name:"+arrayList.get(position).getName());
-        holder.place.setText("Place:"+arrayList.get(position).getPlace());
-        holder.des.setText("Designation:"+arrayList.get(position).getDesignation());
-        holder.age.setText("Age:"+arrayList.get(position).getAge());
+          holder.name.setText("Product name:"+arrayList.get(position).getName());
+        holder.category.setText("Category:"+arrayList.get(position).getCategory());
+        holder.type.setText("Type:"+arrayList.get(position).getType());
+
         dbHelper = new DBHelper(context);
 
         holder.delete.setOnClickListener(new View.OnClickListener() {;
             @Override
             public void onClick(View v) {
                 //deleting note
+
                 dbHelper.deleteData(arrayList.get(position).get_id());
                 arrayList.remove(position);
                 notifyDataSetChanged();
@@ -74,21 +91,35 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>{
         return arrayList.size();
     }
 
+
+
     public class viewHolder extends RecyclerView.ViewHolder {
-        TextView id,name,place,des,age;
+        TextView name,category,type;
         ImageView delete, edit;
         public viewHolder(View itemView) {
             super(itemView);
-            id =  itemView.findViewById(R.id.id);
-            name =  itemView.findViewById(R.id.name);
-            place=itemView.findViewById(R.id.place);
-            des =  itemView.findViewById(R.id.designation);
-            age =  itemView.findViewById(R.id.age);
+
+            name =  itemView.findViewById(R.id.product_name);
+            category=itemView.findViewById(R.id.Category);
+            type=  itemView.findViewById(R.id.type);
             delete = itemView.findViewById(R.id.delete);
             edit =itemView.findViewById(R.id.edit);
         }
     }
 
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        spinnerValue = parent.getItemAtPosition(position).toString();
+        Log.d("Log2", "spinner"+spinnerValue);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @SuppressLint("ResourceType")
     public void showDialog(final int pos) {
 
         final Dialog dialog = new Dialog(activity);
@@ -104,35 +135,74 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>{
         dialog.show();
 
         btnUpdate =dialog.findViewById(R.id.btn_add);
-        editId = dialog.findViewById(R.id.et_id);
-        editName = dialog.findViewById(R.id.et_name);
-        editAge =dialog.findViewById(R.id.et_age);
-        editPlace = dialog.findViewById(R.id.et_place);
-        editDesignation = dialog.findViewById(R.id.et_Designation);
+        editId = dialog.findViewById(R.id.product);
+        spinner = dialog.findViewById(R.id.spinner);
+        radioButton1=dialog.findViewById(R.id.radioButton);
+        radioButton2=dialog.findViewById(R.id.radioButton2);
 
-        editId.setText(arrayList.get(pos).get_id());
-        editName.setText(arrayList.get(pos).getName());
-        editAge.setText(arrayList.get(pos).getAge());
-        editPlace.setText(arrayList.get(pos).getPlace());
-        editDesignation.setText(arrayList.get(pos).getDesignation());
+
+
+        editId.setText(arrayList.get(pos).getName());
+        spinner.setSelected(Boolean.parseBoolean(arrayList.get(pos).getCategory()));
+
+        List<String> categories = new ArrayList<String>();
+        categories.add("Bucket");
+        categories.add("vessel");
+        categories.add("spoon");
+        categories.add("Mug");
+        categories.add("plate");
+        categories.add("glass");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, categories);
+        spinner.setAdapter(dataAdapter);
+        spinner.setOnItemSelectedListener(this);
+
+        radioGroup = dialog.findViewById(R.id.radioGroup);
+        type="";
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch(checkedId){
+                    case R.id.radioButton:
+                   type="Plastic";
+                   radioButton1.isChecked();
+
+                        break;
+                    case R.id.radioButton2:
+                    type="Glass";
+                    radioButton2.isChecked();
+                        break;
+
+                }
+            }
+        });
+        Log.d("Log", "Type" + type);
+
+
+
 
 
         btnUpdate.setOnClickListener(new View.OnClickListener() {;
             @Override
             public void onClick(View v) {
 
-                dbHelper.updateData(arrayList.get(pos).get_id(), editName.getText().toString(),editPlace.getText().toString()
-                         ,editDesignation.getText().toString(),editAge.getText().toString());
-                    arrayList.get(pos).set_id(editId.getText().toString());
-                    arrayList.get(pos).setName(editName.getText().toString());
-                    arrayList.get(pos).setPlace(editPlace.getText().toString());
-                    arrayList.get(pos).setDesignation(editDesignation.getText().toString());
-                    arrayList.get(pos).setAge(editAge.getText().toString());
+               dbHelper.updateData(arrayList.get(pos).get_id(),editId.getText().toString(),spinnerValue, type);
+                    arrayList.get(pos).setName(editId.getText().toString());
+                    arrayList.get(pos).setCategory(spinnerValue);
+                    arrayList.get(pos).setType(type);
+                Log.d("Log", "Type" + type);
+                Log.d("Log", "spinner2" + spinnerValue);
+                Log.d("Log", "list" +   arrayList.get(pos).getCategory());
+
                     dialog.cancel();
-                    //notify list
+
                     notifyDataSetChanged();
 
             }
         });
     }
+
+
+
+
 }

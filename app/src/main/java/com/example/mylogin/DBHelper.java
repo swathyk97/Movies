@@ -12,15 +12,15 @@ import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "UserDetails.db";
+    public static final String DATABASE_NAME = "product.db";
     private static final int DATABASE_VERSION = 5;
     public static final String TABLE_NAME = "User";
     private static String DROP_TABLE = "drop_table";
     public static final String ID = "_id";
-    public static final String NAME = "name";
-    public static final String AGE = "age";
-    public static final String PLACE = "place";
-    public static final String DESIGNATION = "designation";
+    public static final String NAME = "productname";
+    public static final String CATEGORY = "category";
+    public static final String TYPE = "type";
+
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -29,9 +29,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_DB_TABLE =
                 " CREATE TABLE " + TABLE_NAME +
-                        " (_id INTEGER PRIMARY KEY , " +
-                        " name TEXT NOT NULL, " + " age TEXT NOT NULL, " + " place TEXT NOT NULL, " +
-                        " designation TEXT NOT NULL);";
+                        " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        " productname TEXT NOT NULL, " + " category TEXT NOT NULL , "  +
+                        " type TEXT NOT NULL);";
         db.execSQL(CREATE_DB_TABLE);
     }
 
@@ -45,14 +45,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean insertData(String id, String name, String age, String place, String designation) {
+    public boolean insertData( String name, String category, String type) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ID, id);
         contentValues.put(NAME, name);
-        contentValues.put(AGE, age);
-        contentValues.put(PLACE, place);
-        contentValues.put(DESIGNATION, designation);
+        contentValues.put(CATEGORY, category);
+        contentValues.put(TYPE, type);
         long result = db.insert(TABLE_NAME, null, contentValues);
         Log.i("Log", "result:" + result);
         if (result == -1)
@@ -61,15 +59,13 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public boolean updateData(String id, String name, String age, String place, String designation) {
+    public boolean updateData(int id,  String name, String category,String type) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ID, id);
         contentValues.put(NAME, name);
-        contentValues.put(AGE, age);
-        contentValues.put(PLACE, place);
-        contentValues.put(DESIGNATION, designation);
-        long result = db.update(TABLE_NAME, contentValues, "_id = ?", new String[]{id});
+        contentValues.put(CATEGORY, category);
+       contentValues.put(TYPE, type);
+        long result = db.update(TABLE_NAME, contentValues, "_id = ?", new String[]{String.valueOf(id)});
         Log.i("Log", "result:" + result);
         if (result == 0)
             return false;
@@ -77,9 +73,9 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public Integer deleteData(String id) {
+    public Integer deleteData(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, "_id = ?", new String[]{id});
+        return db.delete(TABLE_NAME, "_id = ?", new String[]{String.valueOf(id)});
     }
 
     public ArrayList<NoteModel> getAllData() {
@@ -95,11 +91,10 @@ public class DBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 NoteModel noteModel = new NoteModel();
-                noteModel.set_id(cursor.getString(0));
+                noteModel.set_id(cursor.getInt(0));
                 noteModel.setName(cursor.getString(1));
-                noteModel.setAge(cursor.getString(2));
-                noteModel.setPlace(cursor.getString(3));
-                noteModel.setDesignation(cursor.getString(4));
+                noteModel.setCategory(cursor.getString(2));
+                noteModel.setType(cursor.getString(3));
                 arrayList.add(noteModel);
             }while (cursor.moveToNext());
         }

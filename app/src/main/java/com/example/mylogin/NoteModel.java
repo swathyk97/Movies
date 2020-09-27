@@ -2,17 +2,17 @@ package com.example.mylogin;
 
 public class NoteModel {
 
-    String _id;
+    int _id;
     String name;
-    String age;
-    String place;
-    String designation;
+    String category;
+    String type;
 
-    public String get_id() {
+
+    public int get_id() {
         return _id;
     }
 
-    public void set_id(String _id) {
+    public void set_id(int _id) {
         this._id = _id;
     }
 
@@ -24,27 +24,19 @@ public class NoteModel {
         this.name = name;
     }
 
-    public String getAge() {
-        return age;
+    public String getCategory() {
+        return category;
     }
 
-    public void setAge(String age) {
-        this.age = age;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public String getPlace() {
-        return place;
+    public String getType() {
+        return type;
     }
 
-    public void setPlace(String place) {
-        this.place = place;
-    }
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(String designation) {
-        this.designation = designation;
+    public void setType(String type) {
+        this.type = type;
     }
 }

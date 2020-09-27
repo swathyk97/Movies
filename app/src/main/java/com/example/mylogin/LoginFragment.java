@@ -65,6 +65,7 @@ public class LoginFragment extends Fragment {
                         intent();
                     editor1.putString("email",userName);
                     editor1.putString("password", pass);
+                    editor1.putString("name",sharedPreferences.getString("name",null));
                     editor1.apply();
                     }
                   else {
