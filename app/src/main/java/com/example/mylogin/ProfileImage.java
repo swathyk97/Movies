@@ -16,6 +16,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -38,6 +39,7 @@ public class ProfileImage extends Activity {
     SharedPreferences sharedPreferences, sharedPreferences2;
     SharedPreferences.Editor editor, editor2;
     TextView name, email;
+    Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class ProfileImage extends Activity {
         setContentView(R.layout.activity_profile);
         imageView = findViewById(R.id.imageView);
         name = findViewById(R.id.profilename);
+        button=findViewById(R.id.button);
         email = findViewById(R.id.email);
         sharedPreferences = this.getSharedPreferences("login", Context.MODE_PRIVATE);
         sharedPreferences2 = this.getSharedPreferences("userfile", Context.MODE_PRIVATE);
@@ -53,18 +56,27 @@ public class ProfileImage extends Activity {
         editor = sharedPreferences.edit();
         editor2 = sharedPreferences2.edit();
         imageView.setImageBitmap(decodeBase64(sharedPreferences2.getString("image", "")));
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gallery = new Intent();
+                gallery.setType("image/*");
+                gallery.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(gallery, "select picture"), PICK_IMAGE);
+
+            }
+        });
 
     }
 
     public void imageClick(View view) {
 
-        Intent gallery = new Intent();
-        gallery.setType("image/*");
-        gallery.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(gallery, "select picture"), PICK_IMAGE);
-
-
+                Intent gallery = new Intent();
+                gallery.setType("image/*");
+                gallery.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(gallery, "select picture"), PICK_IMAGE);
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -78,7 +90,7 @@ public class ProfileImage extends Activity {
                 Glide.with(this)
                         .load(bitmap)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate().dontTransform()
+                        .placeholder(R.drawable.profile)
                         .into(imageView);
 
                 editor2.putString("image", encodeTobase64(bitmap));
