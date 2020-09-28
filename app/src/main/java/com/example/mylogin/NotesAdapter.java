@@ -30,10 +30,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.mylogin.R.id.radioGroup;
 
-
-class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>implements AdapterView.OnItemSelectedListener{
+class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder> implements AdapterView.OnItemSelectedListener {
     Context context;
     Activity activity;
     ArrayList<NoteModel> arrayList;
@@ -41,15 +39,15 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>implemen
     EditText editId;
     Button btnUpdate;
     Spinner spinner;
-    RadioButton radioButton1, radioButton2,selectedRadioButton;
+    RadioButton radioButton1, radioButton2;
     RadioGroup radioGroup;
-    String spinnerValue,type;
+    String spinnerValue, type;
     private View view;
 
 
-    public NotesAdapter(Context context,Activity activity, ArrayList<NoteModel> arrayList) {
+    public NotesAdapter(Context context, Activity activity, ArrayList<NoteModel> arrayList) {
         this.context = context;
-        this.activity  = activity ;
+        this.activity = activity;
         this.arrayList = arrayList;
     }
 
@@ -58,26 +56,30 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>implemen
         View view = LayoutInflater.from(context).inflate(R.layout.card_view, viewGroup, false);
         return new viewHolder(view);
     }
+
     @Override
     public void onBindViewHolder(final NotesAdapter.viewHolder holder, final int position) {
-          holder.name.setText("Product name:"+arrayList.get(position).getName());
-        holder.category.setText("Category:"+arrayList.get(position).getCategory());
-        holder.type.setText("Type:"+arrayList.get(position).getType());
+        holder.name.setText("Product name:" + arrayList.get(position).getName());
+        holder.category.setText("Category:" + arrayList.get(position).getCategory());
+        holder.type.setText("Type:" + arrayList.get(position).getType());
 
         dbHelper = new DBHelper(context);
 
-        holder.delete.setOnClickListener(new View.OnClickListener() {;
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            ;
+
             @Override
             public void onClick(View v) {
                 //deleting note
-
                 dbHelper.deleteData(arrayList.get(position).get_id());
                 arrayList.remove(position);
                 notifyDataSetChanged();
             }
         });
 
-        holder.edit.setOnClickListener(new View.OnClickListener() {;
+        holder.edit.setOnClickListener(new View.OnClickListener() {
+            ;
+
             @Override
             public void onClick(View v) {
                 //display edit dialog
@@ -92,18 +94,18 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>implemen
     }
 
 
-
     public class viewHolder extends RecyclerView.ViewHolder {
-        TextView name,category,type;
+        TextView name, category, type;
         ImageView delete, edit;
+
         public viewHolder(View itemView) {
             super(itemView);
 
-            name =  itemView.findViewById(R.id.product_name);
-            category=itemView.findViewById(R.id.Category);
-            type=  itemView.findViewById(R.id.type);
+            name = itemView.findViewById(R.id.product_name);
+            category = itemView.findViewById(R.id.Category);
+            type = itemView.findViewById(R.id.type);
             delete = itemView.findViewById(R.id.delete);
-            edit =itemView.findViewById(R.id.edit);
+            edit = itemView.findViewById(R.id.edit);
         }
     }
 
@@ -111,7 +113,7 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>implemen
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         spinnerValue = parent.getItemAtPosition(position).toString();
-        Log.d("Log2", "spinner"+spinnerValue);
+        Log.d("Log2", "spinner" + spinnerValue);
     }
 
     @Override
@@ -134,12 +136,11 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>implemen
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
 
-        btnUpdate =dialog.findViewById(R.id.btn_add);
+        btnUpdate = dialog.findViewById(R.id.btn_add);
         editId = dialog.findViewById(R.id.product);
         spinner = dialog.findViewById(R.id.spinner);
-        radioButton1=dialog.findViewById(R.id.radioButton);
-        radioButton2=dialog.findViewById(R.id.radioButton2);
-
+        radioButton1 = dialog.findViewById(R.id.radioButton);
+        radioButton2 = dialog.findViewById(R.id.radioButton2);
 
 
         editId.setText(arrayList.get(pos).getName());
@@ -157,20 +158,19 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>implemen
         spinner.setOnItemSelectedListener(this);
 
         radioGroup = dialog.findViewById(R.id.radioGroup);
-        type="";
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        type = "";
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch(checkedId){
+                switch (checkedId) {
                     case R.id.radioButton:
-                   type="Plastic";
-                   radioButton1.isChecked();
+                        type = "Plastic";
+                        radioButton1.isChecked();
 
                         break;
                     case R.id.radioButton2:
-                    type="Glass";
-                    radioButton2.isChecked();
+                        type = "Glass";
+                        radioButton2.isChecked();
                         break;
 
                 }
@@ -179,30 +179,27 @@ class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.viewHolder>implemen
         Log.d("Log", "Type" + type);
 
 
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            ;
 
-
-
-        btnUpdate.setOnClickListener(new View.OnClickListener() {;
             @Override
             public void onClick(View v) {
 
-               dbHelper.updateData(arrayList.get(pos).get_id(),editId.getText().toString(),spinnerValue, type);
-                    arrayList.get(pos).setName(editId.getText().toString());
-                    arrayList.get(pos).setCategory(spinnerValue);
-                    arrayList.get(pos).setType(type);
+                dbHelper.updateData(arrayList.get(pos).get_id(), editId.getText().toString(), spinnerValue, type);
+                arrayList.get(pos).setName(editId.getText().toString());
+                arrayList.get(pos).setCategory(spinnerValue);
+                arrayList.get(pos).setType(type);
                 Log.d("Log", "Type" + type);
                 Log.d("Log", "spinner2" + spinnerValue);
-                Log.d("Log", "list" +   arrayList.get(pos).getCategory());
+                Log.d("Log", "list" + arrayList.get(pos).getCategory());
 
-                    dialog.cancel();
+                dialog.cancel();
 
-                    notifyDataSetChanged();
+                notifyDataSetChanged();
 
             }
         });
     }
-
-
 
 
 }

@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.View;
 import android.widget.TextView;
 
@@ -31,53 +32,59 @@ import java.io.IOException;
 
 public class ProfileImage extends Activity {
 
-   CircularImageView imageView;
-   private static final int PICK_IMAGE=1;
-   Uri imageUri;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    CircularImageView imageView;
+    private static final int PICK_IMAGE = 1;
+    Uri imageUri;
+    SharedPreferences sharedPreferences, sharedPreferences2;
+    SharedPreferences.Editor editor, editor2;
     TextView name, email;
-    String sEncodedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         imageView = findViewById(R.id.imageView);
-        name=findViewById(R.id.profilename);
-        email=findViewById(R.id.email);
-        sharedPreferences=this.getSharedPreferences("login", Context.MODE_PRIVATE);
-        name.setText(sharedPreferences.getString("name",null));
-        email.setText(sharedPreferences.getString("email",null));
-        editor=sharedPreferences.edit();
+        name = findViewById(R.id.profilename);
+        email = findViewById(R.id.email);
+        sharedPreferences = this.getSharedPreferences("login", Context.MODE_PRIVATE);
+        sharedPreferences2 = this.getSharedPreferences("userfile", Context.MODE_PRIVATE);
+        name.setText(sharedPreferences.getString("name", null));
+        email.setText(sharedPreferences.getString("email", null));
+        editor = sharedPreferences.edit();
+        editor2 = sharedPreferences2.edit();
+        imageView.setImageBitmap(decodeBase64(sharedPreferences2.getString("image", "")));
 
     }
 
-    public void imageClick(View view){
+    public void imageClick(View view) {
 
         Intent gallery = new Intent();
         gallery.setType("image/*");
         gallery.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(gallery, "select picture"), PICK_IMAGE);
-        Glide.with(this)
-                .load(imageUri)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageView);
+
 
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode== PICK_IMAGE && resultCode == RESULT_OK){
-            imageUri=data.getData();
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+            imageUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                imageView.setImageBitmap(bitmap);
-                editor.putString("image", encodeTobase64(bitmap));
-                editor.commit();
-               
+                Glide.with(this)
+                        .load(bitmap)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate().dontTransform()
+                        .into(imageView);
+
+                editor2.putString("image", encodeTobase64(bitmap));
+                Log.d("Image bitmap", "bitmap" + bitmap);
+                editor2.commit();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -93,5 +100,11 @@ public class ProfileImage extends Activity {
         String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
         Log.d("Image Log:", imageEncoded);
         return imageEncoded;
+    }
+
+    public static Bitmap decodeBase64(String input) {
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory
+                .decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 }

@@ -20,21 +20,21 @@ import android.widget.Toast;
 
 
 public class LoginFragment extends Fragment {
-    Button buttonLogin,buttonRegister;
+    Button buttonLogin, buttonRegister;
     EditText email, password;
-    String userName,pass;
-    SharedPreferences sharedPreferences,loginPreferences;
-    SharedPreferences.Editor editor,editor1;
+    String userName, pass;
+    SharedPreferences sharedPreferences, loginPreferences;
+    SharedPreferences.Editor editor, editor1;
     Fragment fragment;
     private static FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
 
     @Override
     public void onAttach(Context context) {
-        sharedPreferences=context.getSharedPreferences("userfile",Context.MODE_PRIVATE);
-        loginPreferences=context.getSharedPreferences("login",Context.MODE_PRIVATE);
-        editor=sharedPreferences.edit();
-        editor1=loginPreferences.edit();
+        sharedPreferences = context.getSharedPreferences("userfile", Context.MODE_PRIVATE);
+        loginPreferences = context.getSharedPreferences("login", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor1 = loginPreferences.edit();
 
         super.onAttach(context);
     }
@@ -42,14 +42,14 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view= inflater.inflate(R.layout.fragment_fragment_login, container, false);
-        email= view.findViewById(R.id.et_email);
-        password=view.findViewById(R.id.et_password);
+        final View view = inflater.inflate(R.layout.fragment_fragment_login, container, false);
+        email = view.findViewById(R.id.et_email);
+        password = view.findViewById(R.id.et_password);
 
-        buttonLogin=view.findViewById(R.id.btn_login);
-        buttonRegister=view.findViewById(R.id.btn_register);
+        buttonLogin = view.findViewById(R.id.btn_login);
+        buttonRegister = view.findViewById(R.id.btn_register);
 
-        final String uName, uPass,login;
+        final String uName, uPass, login;
         uName = sharedPreferences.getString("userName", null);
         uPass = sharedPreferences.getString("pass", null);
 
@@ -62,25 +62,23 @@ public class LoginFragment extends Fragment {
                 pass = password.getText().toString();
 
                 if (userName.equals(uName) && pass.equals(uPass)) {
-                        intent();
-                    editor1.putString("email",userName);
+                    intent();
+                    editor1.putString("email", userName);
                     editor1.putString("password", pass);
-                    editor1.putString("name",sharedPreferences.getString("name",null));
+                    editor1.putString("name", sharedPreferences.getString("name", null));
                     editor1.apply();
-                    }
-                  else {
-                      Toast.makeText(getContext(), "incorrect email or password", Toast.LENGTH_SHORT).show();
-                  }
+                } else {
+                    Toast.makeText(getContext(), "incorrect email or password", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
-             login = loginPreferences.getString("email", null);
-             if(login!=null){
-                   Intent homeIntent = new Intent(getActivity(),UserActivity.class);
-                   startActivity(homeIntent);
-                   getActivity().finish();
-             }
-
+        login = loginPreferences.getString("email", null);
+        if (login != null) {
+            Intent homeIntent = new Intent(getActivity(), UserActivity.class);
+            startActivity(homeIntent);
+            getActivity().finish();
+        }
 
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {

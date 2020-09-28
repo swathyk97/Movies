@@ -49,9 +49,9 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                    name = etName.getText().toString();
-                    userName = etEmail.getText().toString();
-                    pass = etPassword.getText().toString();
+                name = etName.getText().toString();
+                userName = etEmail.getText().toString();
+                pass = etPassword.getText().toString();
                 if (validateEmailAndPassword()) {
                     editor.putString("name", name);
                     editor.putString("userName", userName);
@@ -59,7 +59,6 @@ public class RegisterFragment extends Fragment {
                     editor.apply();
 
 
-                    // Toast.makeText(getContext(), "Register", Toast.LENGTH_SHORT).show();
                 }
             }
 

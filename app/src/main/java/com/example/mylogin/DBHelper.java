@@ -30,7 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String CREATE_DB_TABLE =
                 " CREATE TABLE " + TABLE_NAME +
                         " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        " productname TEXT NOT NULL, " + " category TEXT NOT NULL , "  +
+                        " productname TEXT NOT NULL, " + " category TEXT NOT NULL , " +
                         " type TEXT NOT NULL);";
         db.execSQL(CREATE_DB_TABLE);
     }
@@ -45,7 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean insertData( String name, String category, String type) {
+    public boolean insertData(String name, String category, String type) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(NAME, name);
@@ -59,12 +59,12 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public boolean updateData(int id,  String name, String category,String type) {
+    public boolean updateData(int id, String name, String category, String type) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(NAME, name);
         contentValues.put(CATEGORY, category);
-       contentValues.put(TYPE, type);
+        contentValues.put(TYPE, type);
         long result = db.update(TABLE_NAME, contentValues, "_id = ?", new String[]{String.valueOf(id)});
         Log.i("Log", "result:" + result);
         if (result == 0)
@@ -81,13 +81,13 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<NoteModel> getAllData() {
         ArrayList<NoteModel> arrayList = new ArrayList<>();
 
-        // select all query
-        String select_query= "SELECT *FROM " + TABLE_NAME;
 
-        SQLiteDatabase db = this .getWritableDatabase();
+        String select_query = "SELECT *FROM " + TABLE_NAME;
+
+        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(select_query, null);
 
-        // looping through all rows and adding to list
+
         if (cursor.moveToFirst()) {
             do {
                 NoteModel noteModel = new NoteModel();
@@ -96,7 +96,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 noteModel.setCategory(cursor.getString(2));
                 noteModel.setType(cursor.getString(3));
                 arrayList.add(noteModel);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         return arrayList;
     }

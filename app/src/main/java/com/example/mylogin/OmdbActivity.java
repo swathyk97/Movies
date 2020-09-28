@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -26,11 +24,10 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.List;
 
 public class OmdbActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<searchService.ResultWithDetail>{
+        implements LoaderManager.LoaderCallbacks<searchService.ResultWithDetail> {
 
 
     public SearchActivity search;
-   // private EditText mSearchEditText;
     private RecyclerView mMovieListRecyclerView;
     private MovieRecyclerViewAdapter mMovieAdapter;
     private String mMovieTitle;
@@ -48,7 +45,7 @@ public class OmdbActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_omdb);
 
-        bb=getIntent().getExtras();
+        bb = getIntent().getExtras();
         assert bb != null;
         moviename = bb.getString("movie");
         mMovieListRecyclerView = findViewById(R.id.recycler_view);
@@ -58,11 +55,9 @@ public class OmdbActivity extends AppCompatActivity
 
         mMovieAdapter = new MovieRecyclerViewAdapter(null);
         mMovieListRecyclerView.setAdapter(mMovieAdapter);
-        // First param is number of columns and second param is orientation i.e Vertical or Horizontal
         StaggeredGridLayoutManager gridLayoutManager =
                 new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         mMovieListRecyclerView.setItemAnimator(null);
-        // Attach the layout manager to the recycler view
         mMovieListRecyclerView.setLayoutManager(gridLayoutManager);
         LoaderManager.enableDebugLogging(true);
     }
@@ -71,18 +66,15 @@ public class OmdbActivity extends AppCompatActivity
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("mMovieTitle", mMovieTitle);
-        outState.putInt("progress_visibility",mProgressBar.getVisibility());
+        outState.putInt("progress_visibility", mProgressBar.getVisibility());
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
-        int progress_visibility= savedInstanceState.getInt("progress_visibility");
-        // if the progressBar was visible before orientation-change
-        if(progress_visibility == View.VISIBLE) {
+        int progress_visibility = savedInstanceState.getInt("progress_visibility");
+        if (progress_visibility == View.VISIBLE) {
             mProgressBar.setVisibility(View.VISIBLE);
         }
-        // init the loader, so that the onLoadFinished is called
         mMovieTitle = savedInstanceState.getString("mMovieTitle");
         if (mMovieTitle != null) {
             Bundle args = new Bundle();
@@ -100,7 +92,7 @@ public class OmdbActivity extends AppCompatActivity
     public void onLoadFinished(Loader<searchService.ResultWithDetail> loader, searchService.ResultWithDetail resultWithDetail) {
         mProgressBar.setVisibility(View.GONE);
         mMovieListRecyclerView.setVisibility(View.VISIBLE);
-        if(resultWithDetail.getResponse().equals("True")) {
+        if (resultWithDetail.getResponse().equals("True")) {
             mMovieAdapter.swapData(resultWithDetail.getMovieDetailList());
         } else {
             Snackbar.make(mMovieListRecyclerView,
@@ -143,7 +135,7 @@ public class OmdbActivity extends AppCompatActivity
             holder.mYearView.setText(year);
 
             final String imageUrl;
-            if (! detail.Poster.equals("N/A")) {
+            if (!detail.Poster.equals("N/A")) {
                 imageUrl = detail.Poster;
             } else {
                 // default image if there is no poster available
@@ -156,7 +148,6 @@ public class OmdbActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(OmdbActivity.this, DetailActivity.class);
-                    // Pass data object in the bundle and populate details activity.
                     intent.putExtra(DetailActivity.MOVIE_DETAIL, detail);
                     intent.putExtra(DetailActivity.IMAGE_URL, imageUrl);
 
@@ -170,7 +161,7 @@ public class OmdbActivity extends AppCompatActivity
 
         @Override
         public int getItemCount() {
-            if(mValues == null) {
+            if (mValues == null) {
                 return 0;
             }
             return mValues.size();
@@ -201,7 +192,7 @@ public class OmdbActivity extends AppCompatActivity
         }
 
         public void swapData(List<searchService.Detail> items) {
-            if(items != null) {
+            if (items != null) {
                 mValues = items;
                 notifyDataSetChanged();
 
@@ -212,8 +203,8 @@ public class OmdbActivity extends AppCompatActivity
     }
 
     public void startSearch() {
-        if(CommonUtils.isNetworkAvailable(getApplicationContext())) {
-            //CommonUtils.hideSoftKeyboard(OmdbActivity.this);
+        if (CommonUtils.isNetworkAvailable(getApplicationContext())) {
+
             String movieTitle = moviename.trim();
             if (!movieTitle.isEmpty()) {
                 Bundle args = new Bundle();
@@ -221,10 +212,9 @@ public class OmdbActivity extends AppCompatActivity
                 getSupportLoaderManager().restartLoader(LOADER_ID, args, this);
                 mMovieTitle = movieTitle;
                 mProgressBar = (ProgressBar) findViewById(R.id.progress_spinner);
-               mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.VISIBLE);
                 mMovieListRecyclerView.setVisibility(View.GONE);
-            }
-            else
+            } else
                 Snackbar.make(mMovieListRecyclerView,
                         getResources().getString(R.string.snackbar_title_empty),
                         Snackbar.LENGTH_LONG).show();
@@ -234,8 +224,6 @@ public class OmdbActivity extends AppCompatActivity
                     Snackbar.LENGTH_LONG).show();
         }
     }
-
-
 
 
 }

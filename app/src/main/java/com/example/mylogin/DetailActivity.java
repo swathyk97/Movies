@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
+
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -27,9 +27,6 @@ public class DetailActivity extends AppCompatActivity {
         final String imageUrl =  getIntent().getStringExtra(IMAGE_URL);
         Glide.with(this).load(imageUrl).into( (ImageView) findViewById(R.id.main_backdrop));
 
-        // set title for the appbar
-       // CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.main_collapsing);
-     //   collapsingToolbarLayout.setTitle(detail.Title);
 
         ((TextView) findViewById(R.id.grid_title)).setText(detail.Title);
         ((TextView) findViewById(R.id.grid_writers)).setText(detail.Writer);

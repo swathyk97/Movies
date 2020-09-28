@@ -1,23 +1,21 @@
 package com.example.mylogin;
 
-import android.app.AlertDialog;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
-import android.provider.MediaStore;
+
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -26,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -48,8 +45,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,36 +62,26 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
     RadioGroup radioGroup;
     String type;
     TextView content;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    SharedPreferences sharedPreferences, sharedPreferences2;
+    SharedPreferences.Editor editor, editor2;
     String spinnerValue;
     ImageView imageView;
-    Bitmap bitmap;
+    private static SharedPreferences.OnSharedPreferenceChangeListener listener;
 
-
-    Uri imageUri2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav_view);
         myDb = new DBHelper(this);
-        ProfileImage image =new ProfileImage();
-
         actionButton = findViewById(R.id.add);
         recyclerView = findViewById(R.id.recycler_view);
         content = findViewById(R.id.contents);
+        sharedPreferences = this.getSharedPreferences("login", Context.MODE_PRIVATE);
+        sharedPreferences2 = this.getSharedPreferences("userfile", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor2 = sharedPreferences2.edit();
 
-        sharedPreferences=this.getSharedPreferences("login", Context.MODE_PRIVATE);
-        editor=sharedPreferences.edit();
-
-
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog();
-            }
-        });
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -108,12 +93,27 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        View hView =  navigationView.getHeaderView(0);
+        View hView = navigationView.getHeaderView(0);
         TextView nav_user = hView.findViewById(R.id.name);
-        imageView=hView.findViewById(R.id.imageView2);
-        nav_user.setText(sharedPreferences.getString("name",null));
-        imageView.setImageBitmap(decodeBase64(sharedPreferences.getString("image","")));
+        imageView = hView.findViewById(R.id.imageView2);
+        nav_user.setText(sharedPreferences.getString("name", null));
+        imageView.setImageBitmap(decodeBase64(sharedPreferences2.getString("image", "")));
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences2, String key) {
+                imageView.setImageBitmap(decodeBase64(sharedPreferences2.getString("image", "")));
+                Log.d("image", "image" + decodeBase64(sharedPreferences2.getString("image", "")));
+            }
+        };
+        sharedPreferences2.registerOnSharedPreferenceChangeListener(listener);
 
+
+        actionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog();
+            }
+        });
 
 
         arrayList = new ArrayList<>(myDb.getAllData());
@@ -125,6 +125,7 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
             content.setVisibility(View.GONE);
         }
     }
+
     public static Bitmap decodeBase64(String input) {
         byte[] decodedByte = Base64.decode(input, 0);
         return BitmapFactory
@@ -171,8 +172,6 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
         spinner.setOnItemSelectedListener(this);
 
 
-
-
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,7 +180,7 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
 
                 if (isInserted == true) {
                     dialog.cancel();
-                   displayNotes();
+                    displayNotes();
                     content.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Data Inserted", Toast.LENGTH_LONG).show();
                 } else {
@@ -236,7 +235,7 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         spinnerValue = parent.getItemAtPosition(position).toString();
-        Log.d("Log", "spinner"+spinnerValue);
+        Log.d("Log", "spinner" + spinnerValue);
     }
 
     @Override

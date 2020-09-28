@@ -9,7 +9,6 @@ import androidx.loader.content.AsyncTaskLoader;
 import java.io.IOException;
 
 
-
 public class RetrofitLoader extends AsyncTaskLoader<searchService.ResultWithDetail> {
 
     private static final String LOG_TAG = "RetrofitLoader";
@@ -25,17 +24,17 @@ public class RetrofitLoader extends AsyncTaskLoader<searchService.ResultWithDeta
 
     @Override
     public searchService.ResultWithDetail loadInBackground() {
-        // get results from calling API
+
         try {
-            searchService.Result result =  searchService.performSearch(mTitle);
+            searchService.Result result = searchService.performSearch(mTitle);
             searchService.ResultWithDetail resultWithDetail = new searchService.ResultWithDetail(result);
-            if(result.Search != null) {
-                for(searchService.Movie movie: result.Search) {
+            if (result.Search != null) {
+                for (searchService.Movie movie : result.Search) {
                     resultWithDetail.addToList(searchService.getDetail(movie.imdbID));
                 }
             }
-            return  resultWithDetail;
-        } catch(final IOException e) {
+            return resultWithDetail;
+        } catch (final IOException e) {
             Log.e(LOG_TAG, "Error from api access", e);
         }
         return null;
@@ -44,10 +43,10 @@ public class RetrofitLoader extends AsyncTaskLoader<searchService.ResultWithDeta
     @Override
     protected void onStartLoading() {
         if (mData != null) {
-            // Deliver any previously loaded data immediately.
-            deliverResult(mData); // makes loaderManager call onLoadFinished
+
+            deliverResult(mData);
         } else {
-            forceLoad(); // calls the loadInBackground
+            forceLoad();
         }
     }
 
@@ -62,18 +61,16 @@ public class RetrofitLoader extends AsyncTaskLoader<searchService.ResultWithDeta
     @Override
     public void deliverResult(searchService.ResultWithDetail data) {
         if (isReset()) {
-            // The Loader has been reset; ignore the result and invalidate the data.
+
             return;
         }
 
-        // Hold a reference to the old data so it doesn't get garbage collected.
-        // We must protect it until the new data has been delivered.
+
         searchService.ResultWithDetail oldData = mData;
         mData = data;
 
         if (isStarted()) {
-            // If the Loader is in a started state, deliver the results to the
-            // client. The superclass method does this for us.
+
             super.deliverResult(data);
         }
 
