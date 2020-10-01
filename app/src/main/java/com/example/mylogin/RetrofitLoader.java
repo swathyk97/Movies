@@ -26,10 +26,10 @@ public class RetrofitLoader extends AsyncTaskLoader<searchService.ResultWithDeta
     public searchService.ResultWithDetail loadInBackground() {
 
         try {
-            searchService.Result result = searchService.performSearch(mTitle);
+            Result result = searchService.performSearch(mTitle);
             searchService.ResultWithDetail resultWithDetail = new searchService.ResultWithDetail(result);
             if (result.Search != null) {
-                for (searchService.Movie movie : result.Search) {
+                for (Movie movie : result.Search) {
                     resultWithDetail.addToList(searchService.getDetail(movie.imdbID));
                 }
             }

@@ -23,12 +23,12 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         getActionBar();
 
-        final searchService.Detail detail = getIntent().getParcelableExtra(MOVIE_DETAIL);
+        final Detail detail = getIntent().getParcelableExtra(MOVIE_DETAIL);
         final String imageUrl =  getIntent().getStringExtra(IMAGE_URL);
         Glide.with(this).load(imageUrl).into( (ImageView) findViewById(R.id.main_backdrop));
 
 
-        ((TextView) findViewById(R.id.grid_title)).setText(detail.Title);
+        ((TextView) findViewById(R.id.grid_title)).setText(detail.title);
         ((TextView) findViewById(R.id.grid_writers)).setText(detail.Writer);
         ((TextView) findViewById(R.id.grid_actors)).setText(detail.Actors);
         ((TextView) findViewById(R.id.grid_director)).setText(detail.Director);

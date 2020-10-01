@@ -108,9 +108,9 @@ public class OmdbActivity extends AppCompatActivity
     public class MovieRecyclerViewAdapter
             extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
 
-        private List<searchService.Detail> mValues;
+        private List<Detail> mValues;
 
-        public MovieRecyclerViewAdapter(List<searchService.Detail> items) {
+        public MovieRecyclerViewAdapter(List<Detail> items) {
             mValues = items;
         }
 
@@ -125,8 +125,8 @@ public class OmdbActivity extends AppCompatActivity
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-            final searchService.Detail detail = mValues.get(position);
-            final String title = detail.Title;
+            final Detail detail = mValues.get(position);
+            final String title = detail.title;
             final String imdbId = detail.imdbID;
             final String director = detail.Director;
             final String year = detail.Year;
@@ -191,7 +191,7 @@ public class OmdbActivity extends AppCompatActivity
 
         }
 
-        public void swapData(List<searchService.Detail> items) {
+        public void swapData(List<Detail> items) {
             if (items != null) {
                 mValues = items;
                 notifyDataSetChanged();
