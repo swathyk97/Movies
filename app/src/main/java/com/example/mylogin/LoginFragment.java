@@ -18,24 +18,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.mylogin.Presenter.LoginInterface;
+import com.example.mylogin.Presenter.LoginPresenter;
 
-public class LoginFragment extends Fragment {
+
+public class LoginFragment extends Fragment implements LoginInterface.View {
     Button buttonLogin, buttonRegister;
     EditText email, password;
     String userName, pass;
     SharedPreferences sharedPreferences, loginPreferences;
     SharedPreferences.Editor editor, editor1;
-    Fragment fragment;
+
     private static FragmentManager fragmentManager;
-    FragmentTransaction fragmentTransaction;
+
+    LoginInterface.Presenter presenter;
 
     @Override
     public void onAttach(Context context) {
-        sharedPreferences = context.getSharedPreferences("userfile", Context.MODE_PRIVATE);
-        loginPreferences = context.getSharedPreferences("login", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        editor1 = loginPreferences.edit();
-
         super.onAttach(context);
     }
 
@@ -45,10 +44,10 @@ public class LoginFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_fragment_login, container, false);
         email = view.findViewById(R.id.et_email);
         password = view.findViewById(R.id.et_password);
-
         buttonLogin = view.findViewById(R.id.btn_login);
         buttonRegister = view.findViewById(R.id.btn_register);
-
+        presenter = new LoginPresenter(getContext(),this);
+        fragmentManager=getFragmentManager();
         final String uName, uPass, login;
         uName = sharedPreferences.getString("userName", null);
         uPass = sharedPreferences.getString("pass", null);
@@ -60,16 +59,8 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 userName = email.getText().toString();
                 pass = password.getText().toString();
+                presenter.LoginClicked(userName,pass,fragmentManager);
 
-                if (userName.equals(uName) && pass.equals(uPass)) {
-                    intent();
-                    editor1.putString("email", userName);
-                    editor1.putString("password", pass);
-                    editor1.putString("name", sharedPreferences.getString("name", null));
-                    editor1.apply();
-                } else {
-                    Toast.makeText(getContext(), "incorrect email or password", Toast.LENGTH_SHORT).show();
-                }
 
             }
         });
@@ -84,25 +75,28 @@ public class LoginFragment extends Fragment {
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragment = new RegisterFragment();
-                fragmentManager = getFragmentManager();
-                fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.replace(R.id.fragment_container, fragment);
-                fragmentTransaction.commit();
+               presenter.RegisterClicked(fragmentManager);
+
             }
         });
         return view;
 
 
     }
-
-    private void intent() {
+    @Override
+    public void intent() {
         Intent homeIntent = new Intent(getActivity(), UserActivity.class);
         startActivity(homeIntent);
         getActivity().finish();
         Toast.makeText(getContext(), "Login", Toast.LENGTH_SHORT).show();
     }
+    @Override
+    public void registerFailV(String message) {
+        Toast.makeText(getContext(),message, Toast.LENGTH_SHORT).show();
+    }
 
-
+    @Override
+    public void registerSuccessV(String message) {
+        Toast.makeText(getContext(),message, Toast.LENGTH_SHORT).show();
+    }
 }
